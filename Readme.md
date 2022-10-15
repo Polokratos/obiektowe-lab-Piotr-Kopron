@@ -1,89 +1,176 @@
-# Laboratorium z przedmiotu 'Programowanie obiektowe'
+# Laboratorium 2
 
-Instrukcje do poszczególnych laboratoriów znajdują się w odpowiednich folderach.
+Celem laboratorium jest zapoznanie się z modelem obiektowym Javy, na przykładzie klasy reprezentującej dwuwymiarowy
+wektor. Ponadto studenci zapoznają się z frameworkiem do testowania.
 
-* [Wprowadzenie do Javy](lab1/Readme.md)
-* [Model obiektowy Javy](lab2/Readme.md)
-* [Interakcje pomiędzy obiektami](lab3/Readme.md)
-* [Interfejsy i kolekcje](lab4/Readme.md)
-* [Dziedziczenie](lab5/Readme.md)
-* [Wyjątki i interfejs `Map`](lab6/Readme.md)
-* [Wzorzec `Observer`](lab7/Readme.md)
-* [Graficzny interfejs użytkownika](lab8/Readme.md)
+Najważniejsze zadania:
+1. Stworznie klasy `Vector2d`.
+2. Stworzenie klasy `MapDirection`.
+3. Stworzenie klasy `MoveDirection`.
+4. Testy jednostkowe.
 
-# Zasady oceny
+## Przydatne informacje
 
-Wyobraź sobie, że w tych zajęciach poza Tobą bierze udział mała *istota żywa*, która na początku jest
-*kościotrupem* (więc w zasadzie jest nieżywa). Wszystko co robisz w trakcie zajęć może przyczynić się do tego, że ta
-istota otrzyma trochę *czerwonych krwinek*. Jeśli osiągnie stan 25 czerwonych krwinek, to będzie *chuderlakiem*. 
+* Pola w obiekcie deklarowane są w ciele klasy, np. 
+```java
+class Vector2d {
+  public int x;
+  public int y;
+}
+```
+* Konstruktor jest specjalną metodą w każdej klasie. Nazywa się tak samo jak klasa i nie zwraca wartości. Konstruktor 
+pozwala ustalić początkową wartość pól obiektu, jeśli mają być przekazane przez użytkownika, np.
+```java
+class Vector2d {
+  public Vector2d(int x, int y){
+    this.x = x;
+    this.y = y;
+  }
+}
+```
+* Obiekty klasy tworzy się za pomocą wywołania `new`, np. 
+```java
+Vector2d position1 = new Vector2d(1,2);
+```
+* Słowo kluczowe `this` odnosi się do obiektu, na rzecz którego wywołano metodę.
+Przykładowo w języku C moglibyśmy zdefiniować metodę `createPoint`:
 
-## Stan zdrowia
+```C
+struct Point {
+  int x;
+  int y;
+}
 
-Poniższa tabela pokazuje jakie stadia zdrowotne może osiągnąć istota, którą się opiekujesz:
+struct Point * createPoint(int x, int y){
+  struct Point * result = malloc(sizeof(struct Point));
+  result->x = x;
+  result->y = y;
+  return result;
+}
 
-**uwaga: punktacja została obniżona!**
+struct Point * p1 = createPoint(1,2);
+```
 
-| stan            | liczba czerwonych krwinek |
-|:----------------|---------------------------|
-| kościotrup      | < 25                      |
-| chuderlak       | <25, 30)                  |
-| kuracjusz       | <30, 35)                  |
-| na zwolnieniu   | <35, 40)                  |
-| krzepki móżdżek | <40, 45)                  |
-| okaz zdrowia    | >= 45                     |
+Ten kod jest analogiczny do konstruktora, z ta różnicą, że w konstruktorze nie tworzymy obiektu *explicite*, tylko mamy do
+niego dostęp za pomocą słowa kluczowego `this`.
 
+* Metoda `equals` ma zwykle taki sam schemat:
 
-## Zdobywanie krwinek
+```java
+public boolean equals(Object other){
+  if (this == other)
+    return true;
+  if (!(other instanceof Vector2d))
+    return false;
+  Vector2d that = (Vector2d) other;
+  // tutaj przeprowadzane jest faktyczne porównanie
+}
+```
 
-W trakcie zajęć masz różne możliwości zdobywania czerwonych krwinek dla swojej istoty, możesz:
-
-* wziąć jednorazowy zastrzyk adrenaliny (+1 krwinka)
-* uprawiać ćwiczenia na sali gimnastycznej (+2 krwinki, łącznie 16 krwinek)
-* poddawać się kwarantannie (+1 krwinka, łącznie 7 kwrinek)
-* wziąć udział w zawodach lekkoatletycznych (max. +2 krwinki)
-* wziąć udział w biegu katorżniczym, po którym robione jest badanie lekarskie (max. +16 krwinek)
-* wziąć udział w wycieczce rowerowej, po którym robione jest badanie krwi (max. +8 krwinek)
-
-Łącznie można zdobyć 50 krwinek. 
-
-Dodatkowo można też otrzymać transfuzję krwi (max +5 krwinek) na poprawienie sytuacji - tego typu zabieg nie liczy się do głównej puli i jest traktowany jako bonus.
-
-Wzięcie udziału w biegu katorżniczym możliwe jest tylko, jeśli twoja istota ma co najmniej 12 krwinek.
-
-Wzięcie udziału w wycieczce rowerowej możliwe jest tylko, jeśli twoja istota uzyskała minimum 8 krwinek w
-badaniu krwi po biegu katorżniczym.
-
-## Plan
-
-Poniższy diagram pokazuje kiedy można wykonywać poszczególne aktywności, związane ze zdobywaniem krwinek:
-
-
-| tydzień | wydarzenia        |
-|---------|-------------------|
-| 1       |                   |
-| 2       | sala gimanstyczna |
-| 3       | kwarantanna, sala gimanstyczna |
-| 4       | kwarantanna, sala gimanstyczna |
-| 5       | kwarantanna, sala gimanstyczna |
-| 6       | kwarantanna, sala gimanstyczna |
-| 7       | kwarantanna, sala gimanstyczna |
-| 8       | kwarantanna, sala gimanstyczna, bieg |
-| 9       | kwarantanna, bieg              |
-| 10      | zawody, bieg      |
-| 11      | bieg |
-| 12      | badanie lekarskie |
-| 13      | wycieczka         |
-| 14      | wycieczka         |
-| 15      | badanie krwi      |
+Należy również wiedzieć, że zmiana metody `equals` powinna powodować zmianę metody `hashCode`, w przeciwnym razie
+umieszczenie obiektów w kolekcji takiej jak `Set` będzie niezgodne z semantyką metody `equals`.
 
 
-## Pseudonimy
+* Definicję typu wyliczeniowego można rozszerzać dodając do niego pola i metody. Wymaga to umieszczenia średnika po ostatniej
+  wartości typu, np.:
+```java
+enum MapDirection {
+  NORTH,
+  SOUTH,
+  EAST,
+  WEST;
 
-Uzyskiwanie czerwonych krwinek wymaga [podania pseudonimu] dla istoty żywej.
+  public String toString(){
+    switch(this) {
+      case NORTH: return "Północ";
+      case SOUTH: return "Południe";
+      //...
+    }
+  }
+}
+```
 
-Aktualny stan zdrowotny istot dostępny jest w [Hall of Fame].
+* Metody testujące posiadają adnotację `@Test`.
+
+* W metodach testujących można użyć np. następujących asercji:
+  * `assertEquals(a, b)` - weryfikuje czy obiekty `a` i `b` są sobie równe (korzystając z metody `equals`),
+  * `assertTrue(a)` - weryfikuje czy wartość logiczna `a` jest prawdą,
+  * `assertFalse(a)` - weryfikuje czy wartość logiczna `a` jest fałszem.
+
+## Zadania do wykonania
+
+### Klasa `Vector2d`
+
+0. Projekt z poprzedniego laboratorium należy umieścić w repozytorium git.
+0. Wersję opracowaną na poprzednich zajęciach należy [otagować](https://www.jetbrains.com/help/idea/use-tags-to-mark-specific-commits.html) jako `lab1` oraz 
+   [wysłać tag](https://stackoverflow.com/questions/28905277/how-to-push-git-tags-from-intellij-without-using-the-console) do zdalnego repozytorium.
+0. Po zakończeniu pracy nad laboratorium należy je otagować tagiem `lab2`.
+1. Pliki projektu należy umieszczać w pakiecie `agh.ics.oop`.
+2. Wykorzystaj klasę `World` z metodą `main` z poprzednich zajęć.
+3. Utwórz klasę `Vector2d`, która:
+   * posiada dwa publiczne pola `x` i `y` typu `int`, które nie mogą być modyfikowane (`final`),
+   * posiada konstruktor akceptujący parametry `x` i `y`, która są przypisywane do pól `x` i `y`,
+   * posiada metodę `String toString()`, która zamienia pozycję na napis `(x,y)`, np. dla `x = 1` oraz `y = 2`, napis ma postać
+     `(1,2)`,
+   * posiada metodę `boolean precedes(Vector2d other)`, akceptującą inny obiekt tej klasy i zwracającą wartość `true`, jeśli oba pola mają
+     wartość mniejszą bądź równą polom drugiego obiektu,
+   * posiada metodę `boolean follows(Vector2d other)`, akceptującą inny obiekt tej klasy i zwracającą wartość `true`, jeśli oba pola mają
+     wartość większą bądź równą polom drugiego obiektu,
+   * posiada metodę `Vector2d upperRight(Vector2d other)`, która akceptuje inny punkt i zwraca obiekt klasy `Vector2d` posiadający te składowe
+     punktów, które mają większe wartości dla odpowiednich osi (innymi słowy jest prawym górnym rogiem prostokąta, który
+     opisany jest na obu punktach, którego krawędzie są równoległe do osi X i Y),
+   * posiada metodę `Vector2d lowerLeft(Vector2d other)`, która akceptuje inny punkt i zwraca obiekt klasy `Vector2d` posiadający te składowe
+     punktów, które mają mniejsze wartości dla odpowiednich osi (tzn. lewy dolny róg prostokąta),
+   * posiada metodę `Vector2d add(Vector2d other)`, która zwraca nowy obiekt klasy `Vector2d`, którego składowe są sumą odpowiednich składowych
+     dodawanych pozycji,
+   * posiada metodę `Vector2d subtract(Vector2d other)`, która zwraca nowy obiekt klasy `Vector2d`, którego składowe są różnicą 
+     odpowiednich składowych odejmowanych pozycji, 
+   * posiada metodę `boolean equals(Object other)` która zwraca prawdę, jeśli obie pozycje są sobie równe (zwróć uwagę na typ parametru),
+   * posiada metodę `Vector2d opposite()`, która zwraca nowy obiekt tej klasy, posiadający zmienione znaki obu składowych.
+3. Poniższy obrazek ilustruje metody `precedes` i `follows`. `v1` poprzedza (precedes) `v2` oraz `v3`. `v2` poprzedza `v3`.
+   Wszystkie wektory poprzedzają również same siebie (relacja ta jest zwrotna). `v3` następuje po (follows) `v2` oraz
+   `v1`, `v2` następuje po `v1`. Wszystkie wektory następują również po samych sobie.
+   ![wektory](vector2d.png)
+4. Poniższy obrazek ilustruje metody `lowerLeft` oraz `upperRight`.
+   ![rogi](vector2d-a.png)
+5. W metodzie `main` wprowadź następujący kod:
+```java
+Vector2d position1 = new Vector2d(1,2);
+System.out.println(position1);
+Vector2d position2 = new Vector2d(-2,1);
+System.out.println(position2);
+System.out.println(position1.add(position2));
+```
+Sprawdź czy uzyskane wyniki są poprawne.
+
+### Pozostałe klasy
+
+6. Utwórz typ wyliczeniowy `MoveDirection` z czterema kierunkami: `FORWARD, BACKWARD, RIGHT, LEFT`.
+7. Utwórz typ wyliczeniowy `MapDirection` z czterema kierunkami: `NORTH, SOUTH, WEST, EAST`, który:
+   * posiada metodę `toString`, która dla kierunku `EAST` zwraca łańcuch `Wschód`, dla `WEST` - `Zachód`, itd.
+   * posiada metodę `next`, która dla kierunku `EAST` zwraca `SOUTH` (kolejny kierunek zgodnie z ruchem wskazówek
+     zegara), itd.
+   * posiada metodę `previous`, która dla kierunku `EAST` zwraca `NORTH` (kolejny kierunek zgodnie z ruchem przeciwnym
+     do ruchu wskazówek zegara), itd.
+   * posiada metodę `toUnitVector`, która zwraca jednostkowy wektor przemieszczenia typu `Vector2d` zgodny z orientacją na mapie,
+     tzn. dla `NORTH` wektor ten powinien mieć wartość `(0,1)`, dla `EAST` `(1,0)`, itd.
+8. Sprawdź w metodzie `main` czy metody te działają zgodnie z opisem.
 
 
-## Słowniczek
+### Testy
 
-Trudne terminy wyjaśnione są w [słowniczku](slownik.md)
+
+1. Zmodyfikuj plik `build.gradle`:
+   * usuń linię `testCompile` w sekcji `dependencies`.
+   * dodaj linię `testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")` w tej samej sekcji
+3. Utwórz klasę `MapDirectionTest` w katalogu `src/test/java` w pakiecie `agh.ics.oop`.
+4. Zaimplementuj test weryfikujący poprawność działania metody `next()`, dla wszystkich przypadków (dodaj anotację
+   `@Test` przed deklaracją metody).
+4. Uruchom test korzystając z zielonych trójkątów po lewej stronie.
+5. Zaimplementuj test weryfikujący poprawność działania metody `previous()`, dla wszystkich przypadków.
+6. Utwórz klasę `Vector2dTest`.
+7. Dodaj testy weryfikujące poprawność metod: `equals(Object other)`, `toString()`, `precedes(Vector2d other)`, `follows(Vector2d other)`,
+   `upperRight(Vector2d other)`, `lowerLeft(Vector2d other)`, `add(Vector2d other)`, `subtract(Vector2d other)`,
+   `opposite()`.
+
+
