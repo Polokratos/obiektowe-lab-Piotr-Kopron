@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 public class World {
     public static void main(String[] args)
-    {
+    {   
         //#region lab1
         System.out.println("system wystartowal");
         Run(CommandStringToDirectionArray(args));
@@ -10,8 +10,8 @@ public class World {
         //#endregion lab1
 
         //#region lab2
-        Vector2D position1 = new Vector2D(1,2);
-        Vector2D position2 = new Vector2D(-2, 1);
+        Vector2d position1 = new Vector2d(1,2);
+        Vector2d position2 = new Vector2d(-2, 1);
         System.out.println(position1);
         System.out.println(position2);
         System.out.println(position1.add(position2));
@@ -20,6 +20,16 @@ public class World {
         System.out.println(MapDirection.NORTH.next());
         System.out.println(MapDirection.NORTH.previous());
         System.out.println(MapDirection.NORTH.toUnitVector());
+        //#endregion lab2
+
+        //#region lab3
+        var meat = new Animal();
+        System.out.println(meat.toString());
+        for (MoveDirection md : OptionsParser.parse(args)) {
+            meat.move(md);
+            System.out.println(meat.toString());   
+        }
+        //#endregion lab3
 
     }
 
