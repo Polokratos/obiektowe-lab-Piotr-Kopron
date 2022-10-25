@@ -2,7 +2,7 @@ package agh.ics.oop;
 import java.util.ArrayList;
 
 public class OptionsParser {
-    public /*static <- is this allowed?*/ MoveDirection[] parse(String[] input)
+    public static MoveDirection[] parse(String[] input)
     {
         ArrayList<MoveDirection> list = new ArrayList<>(); //we don't know how many commands are valid 
         for (String i : input) {
@@ -16,7 +16,7 @@ public class OptionsParser {
     }
 
     //decoupling singular command from grouping code.
-    private /*static <- is this allowed?*/ MoveDirection parseCommand(String input)
+    private static MoveDirection parseCommand(String input)
     {
         MoveDirection retval = switch (input) {
             case "f" -> MoveDirection.FORWARD;
