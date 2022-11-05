@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  */
 
 public class AnimalTest {
-    @Test
+    @Deprecated @Test
     public void NoMovementTest()
     {
         var a1 = new Animal();
@@ -34,7 +34,7 @@ public class AnimalTest {
         
     }
 
-    @Test
+    @Deprecated @Test
     public void SimpleMovementTest()
     {
         var a = new Animal();
@@ -46,7 +46,7 @@ public class AnimalTest {
         assert(a.isAt(new Vector2d(2, 1)));
     }
 
-    @Test
+    @Deprecated @Test
     public void SimpleRotationTest()
     {
         var a = new Animal();
@@ -58,7 +58,7 @@ public class AnimalTest {
         assertEquals("Position: (2,2) Direction: Wschod", a.toString());
     }
 
-    @Test
+    @Deprecated @Test
     public void OutOfBoundsTest()
     {
         var a = new Animal(MapDirection.NORTH,new Vector2d(0, 5));
@@ -67,7 +67,7 @@ public class AnimalTest {
         assert(a.isAt(new Vector2d(0, 5)));
     }
 
-    @Test
+    @Deprecated @Test
     public void ComplexMovementTest()
     {
         var a = new Animal();
@@ -83,7 +83,7 @@ public class AnimalTest {
     }
 
 
-    @Test public void ParsedCommandTest()
+    @Deprecated @Test public void ParsedCommandTest()
     {
         var a = new Animal();
         String[] cmdstr = {"f","l","l","x","b","I like trains","backward"};

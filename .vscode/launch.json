@@ -15,8 +15,7 @@
             "name": "Launch World",
             "request": "launch",
             "mainClass": "agh.ics.oop.World",
-            "projectName": "app",
-            "args": ["f","b","r","l","f","f","r","r","f","f","f","f","f","f","f","f"]
+            "projectName": "app"
         }
     ]
 }

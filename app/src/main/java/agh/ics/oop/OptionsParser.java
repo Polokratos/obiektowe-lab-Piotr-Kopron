@@ -7,7 +7,7 @@ public class OptionsParser {
         ArrayList<MoveDirection> list = new ArrayList<>(); //we don't know how many commands are valid 
         for (String i : input) {
             MoveDirection md = parseCommand(i);
-            if(!md.equals(null))
+            if(md != null)
                 list.add(md);
         }
         MoveDirection[] retval = new MoveDirection[list.size()];
