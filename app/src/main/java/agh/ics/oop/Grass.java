@@ -12,6 +12,11 @@ public class Grass {
         return position;
     }
 
+    public void setPosition(Vector2d value)
+    {
+        position = value;
+    }
+
     public String toString() {
         return "*";
     }

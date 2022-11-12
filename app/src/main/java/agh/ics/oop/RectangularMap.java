@@ -1,6 +1,6 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RectangularMap extends AbstractWorldMap{
     //I hate the fact that this is the only solution that is within the spec.
@@ -19,7 +19,7 @@ public class RectangularMap extends AbstractWorldMap{
         this.width = width;
         this.height = height;
         vis = new MapVisualizer(this);
-        animals = new ArrayList<>();
+        animals = new HashMap<>();
     }
 
     @Override
@@ -34,11 +34,8 @@ public class RectangularMap extends AbstractWorldMap{
     @Override
     public Object objectAt(Vector2d position)
     {
-        
-        for (var animal : animals) {
-            if(animal.getPosition().equals(position))
-            return animal;
-        }
+        if(animals.containsKey(position))
+            return animals.get(position);
         return null;
     }
     

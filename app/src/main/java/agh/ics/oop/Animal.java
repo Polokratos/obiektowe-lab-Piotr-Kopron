@@ -1,9 +1,14 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
+
 public class Animal {
     private MapDirection currentDirection;
     private Vector2d currentPosition;
     private IWorldMap map;
+
+    private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
+
     //Depracated constructors without a map refernce.
     @Deprecated
     public Animal(MapDirection startingDirection, Vector2d startingPosition)
@@ -94,9 +99,28 @@ public class Animal {
         Vector2d movementVector = new Vector2d(x, y);
         if(map.canMoveTo(currentPosition.add(movementVector)))
         {
-            currentPosition = currentPosition.add(movementVector);   
+            Vector2d newPosition = currentPosition.add(movementVector);   
+            positionChanged(newPosition);
         }
         
         
     }
+
+    public void addObserver(IPositionChangeObserver obs) {
+        observers.add(obs);        
+    }
+
+    public void removeObserver(IPositionChangeObserver obs)
+    {
+        observers.remove(obs);
+    }
+
+    public void positionChanged(Vector2d newPosition)
+    {
+        for (IPositionChangeObserver obs : observers) {
+            obs.positionChanged(currentPosition, newPosition);
+        }
+        currentPosition = newPosition;
+    }
+    
 }

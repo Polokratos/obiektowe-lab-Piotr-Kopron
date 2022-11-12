@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GrasslandsIntegrationTest {
     
@@ -14,8 +14,8 @@ public class GrasslandsIntegrationTest {
         {
             super(grassAmount);
         }
-        public ArrayList<Animal> GetAnimals(){return animals;}
-        public ArrayList<Grass> GetGrass(){return patches;}
+        public HashMap<Vector2d,Animal> GetAnimals(){return animals;}
+        public HashMap<Vector2d,Grass> GetGrass(){return patches;}
     }
 
     @Test

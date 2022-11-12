@@ -1,20 +1,21 @@
 package agh.ics.oop;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
-
+import java.util.Set;
 import java.lang.Math;
 
 public class GrassField extends AbstractWorldMap{
     
-    protected ArrayList<Grass> patches;
+    protected HashMap<Vector2d,Grass> patches;
     
 
     public GrassField(int grassAmount)
     {
         vis = new MapVisualizer(this);
-        patches = new ArrayList<>();
-        animals = new ArrayList<>();
+        patches = new HashMap<>();
+        animals = new HashMap<>();
         Random rng = new Random();
         int barrier = (int)Math.ceil(Math.sqrt(10*grassAmount));
         ArrayList<Vector2d> patch_notes = new ArrayList<>();
@@ -26,20 +27,16 @@ public class GrassField extends AbstractWorldMap{
             patch_notes.add(pos);
         }
         for (Vector2d pos : patch_notes) {
-            patches.add(new Grass(pos));
+            patches.put(pos,new Grass(pos));
         }
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        for (Animal animal : animals) {
-            if(animal.getPosition().equals(position))
-                return animal;
-        }//Animals get first priority.
-        for (Grass grass : patches) {
-            if(grass.getPosition().equals(position))
-            return grass;
-        }
+        if(animals.containsKey(position))
+            return animals.get(position);
+        if(patches.containsKey(position))
+            return patches.get(position);
         return null;
     }
 
@@ -47,31 +44,28 @@ public class GrassField extends AbstractWorldMap{
 
     @Override
     public String toString() {
-        //Getting the bounding box
-        Vector2d ll;
-        Vector2d ur;
-        if(patches.isEmpty())
+        Set<Vector2d> akeys = animals.keySet();
+        Set<Vector2d> gkeys = patches.keySet();
+        Vector2d ll,ur;
+        if(akeys.size() > 0)
         {
-            if(animals.isEmpty())
-                return "map is empty";
-            ll = animals.get(0).getPosition();
-            ur = animals.get(0).getPosition();
+            ll = akeys.iterator().next();
+            ur = akeys.iterator().next();
         }
-        else
+        else if(gkeys.size() > 0)
         {
-            ll = patches.get(0).getPosition();
-            ur = patches.get(0).getPosition();
+            ll = gkeys.iterator().next();
+            ur = gkeys.iterator().next();
         }
-        
-        for (Grass patch : patches) {
-            ll = ll.lowerLeft(patch.getPosition());
-            ur = ur.upperRight(patch.getPosition());
+        else return "Map is empty";
+        for (Vector2d vector2d : akeys) {
+            ll = ll.lowerLeft(vector2d);
+            ur = ur.upperRight(vector2d);
         }
-        for (Animal animal : animals) {
-            ll = ll.lowerLeft(animal.getPosition());
-            ur = ur.upperRight(animal.getPosition());
+        for (Vector2d vector2d : gkeys) {
+            ll = ll.lowerLeft(vector2d);
+            ur = ur.upperRight(vector2d);
         }
-
         return vis.draw(ll,ur);
     }
 
@@ -88,22 +82,19 @@ public class GrassField extends AbstractWorldMap{
         }
         return true;
     }
+    
     private void MoveGrass(Vector2d position) {
         Random rng = new Random();
-        int barrier = (int)Math.ceil(Math.sqrt(10*patches.size()));
-        boolean stillIn = true;
-        while (stillIn) {
-            int x = rng.nextInt(barrier);
-            int y = rng.nextInt(barrier);
-            var vec = new Vector2d(x, y);
-            stillIn = false;
-            inner:
-            for (Grass grass : patches) {
-                if(grass.getPosition().equals(vec))
-                stillIn = true;
-                break inner; //no need to check further
-            }
-        }
+        int barrier = (int)Math.ceil(Math.sqrt(10*patches.size()))+1;
+        Grass toMove = (Grass) objectAt(position); //should always be grass.
+        Vector2d positionOLD = toMove.getPosition();
+        Vector2d pos;
+        do {
+            pos = new Vector2d(rng.nextInt(barrier),rng.nextInt(barrier));    
+            toMove.setPosition(pos);
+        } while (objectAt(pos) != null);
+        patches.remove(positionOLD);
+        patches.put(pos, toMove);
     }
 
 }
