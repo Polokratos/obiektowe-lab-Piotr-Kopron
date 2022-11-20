@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +27,19 @@ public class IWorldMapTest {
 
     @Test
     public void PlaceFailTest() {
-        assert(!subject1.place(meat13F));
-        assert(!subject2.place(meat23F));
+        try {
+            subject1.place(meat13F);
+            fail();
+        } catch (IllegalArgumentException e) {
+            //no-op
+        }
+        try {
+            subject2.place(meat23F);
+            fail();
+        } catch (IllegalArgumentException e) {
+            //no-op
+        }
+
     }
 
     @Test

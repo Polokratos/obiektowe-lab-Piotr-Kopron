@@ -2,11 +2,18 @@ package agh.ics.oop;
 import java.util.ArrayList;
 
 public class OptionsParser {
+    
+
+    /**
+     * @throws IllegalArgumentException
+     * Upon entering an invalid argument
+     * 
+     */
     public static MoveDirection[] parse(String[] input)
     {
         ArrayList<MoveDirection> list = new ArrayList<>(); //we don't know how many commands are valid 
         for (String i : input) {
-            MoveDirection md = parseCommand(i);
+            MoveDirection md = parseCommand(i); //throws IllegalArumentException, we just rethrow.
             if(md != null)
                 list.add(md);
         }
@@ -15,7 +22,14 @@ public class OptionsParser {
         return retval;
     }
 
-    //decoupling singular command from grouping code.
+    
+    /**
+     * @summary
+     * decoupling singular command from grouping code.
+     * @throws IllegalArgumentException
+     * Upon entering an invalid argument
+     * 
+     */
     private static MoveDirection parseCommand(String input)
     {
         MoveDirection retval = switch (input) {
@@ -27,7 +41,7 @@ public class OptionsParser {
             case "left" -> MoveDirection.LEFT;
             case "r" -> MoveDirection.RIGHT;
             case "right" -> MoveDirection.RIGHT;
-            default -> null;
+            default -> throw new IllegalArgumentException("Argument" + input + "is not legal move specification");
         };
         return retval;
 

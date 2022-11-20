@@ -1,20 +1,19 @@
 package agh.ics.oop;
 
 public class Grass {
-    private Vector2d position;
+    private Vector2d currentPosition;
     public Grass(Vector2d pos)
     {
-        position = pos;
+        currentPosition = pos;
     }
 
-    public Vector2d getPosition()
-    {
-        return position;
+    public Vector2d getPosition() {
+        return new Vector2d(currentPosition.x, currentPosition.y);
     }
 
     public void setPosition(Vector2d value)
     {
-        position = value;
+        currentPosition = value;
     }
 
     public String toString() {

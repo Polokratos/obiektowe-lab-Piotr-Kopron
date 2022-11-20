@@ -14,9 +14,17 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
+    //boolean return value is deprecated, but the old EXTERNAL interface requires it.
     public boolean place(Animal animal) {
         if(!canMoveTo(animal.getPosition()))
-            return false;
+        {
+            String errormessage = 
+            "The field " +
+            animal.getPosition().toString() +
+            "is either out of bounds or already occupied.";
+            throw new IllegalArgumentException(errormessage);
+        }
+            
         animals.put(animal.getPosition(), animal);
         return true;
     }

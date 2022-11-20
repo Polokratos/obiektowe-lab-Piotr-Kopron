@@ -3,17 +3,18 @@ package agh.ics.oop;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Set;
 import java.lang.Math;
 
 public class GrassField extends AbstractWorldMap{
     
     protected HashMap<Vector2d,Grass> patches;
     
+    protected MapBoundary boundary;
 
     public GrassField(int grassAmount)
     {
         vis = new MapVisualizer(this);
+        boundary = new MapBoundary(this);
         patches = new HashMap<>();
         animals = new HashMap<>();
         Random rng = new Random();
@@ -28,11 +29,13 @@ public class GrassField extends AbstractWorldMap{
         }
         for (Vector2d pos : patch_notes) {
             patches.put(pos,new Grass(pos));
+            boundary.place(pos);
         }
     }
 
     @Override
     public Object objectAt(Vector2d position) {
+
         if(animals.containsKey(position))
             return animals.get(position);
         if(patches.containsKey(position))
@@ -40,34 +43,24 @@ public class GrassField extends AbstractWorldMap{
         return null;
     }
 
-    
+    @Override
+    public boolean place(Animal animal) {
+        super.place(animal);
+        boundary.place(animal);
+        animal.addObserver(this);
+        return true;
+    }
 
     @Override
     public String toString() {
-        Set<Vector2d> akeys = animals.keySet();
-        Set<Vector2d> gkeys = patches.keySet();
-        Vector2d ll,ur;
-        if(akeys.size() > 0)
-        {
-            ll = akeys.iterator().next();
-            ur = akeys.iterator().next();
-        }
-        else if(gkeys.size() > 0)
-        {
-            ll = gkeys.iterator().next();
-            ur = gkeys.iterator().next();
-        }
-        else return "Map is empty";
-        for (Vector2d vector2d : akeys) {
-            ll = ll.lowerLeft(vector2d);
-            ur = ur.upperRight(vector2d);
-        }
-        for (Vector2d vector2d : gkeys) {
-            ll = ll.lowerLeft(vector2d);
-            ur = ur.upperRight(vector2d);
-        }
-        return vis.draw(ll,ur);
+        if(animals.keySet().size() == 0 && patches.keySet().size() == 0)
+            return "Map is empty";
+        return vis.draw(boundaryLowerLeft(),boundaryUpperRight());
     }
+
+    //y u no tuple
+    public Vector2d boundaryLowerLeft(){return boundary.lowerleft();}
+    public Vector2d boundaryUpperRight(){return boundary.upperright();}
 
     @Override
     public boolean canMoveTo(Vector2d position) {
@@ -82,6 +75,12 @@ public class GrassField extends AbstractWorldMap{
         }
         return true;
     }
+
+    @Override
+    public boolean isOccupied(Vector2d position) {
+        if(!super.isOccupied(position)) return false;
+        return (objectAt(position) instanceof Animal);
+    }
     
     private void MoveGrass(Vector2d position) {
         Random rng = new Random();
@@ -95,6 +94,7 @@ public class GrassField extends AbstractWorldMap{
         } while (objectAt(pos) != null);
         patches.remove(positionOLD);
         patches.put(pos, toMove);
+        boundary.positionChanged(positionOLD, pos);
     }
 
 }

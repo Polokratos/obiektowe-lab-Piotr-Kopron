@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 public class Animal {
     private MapDirection currentDirection;
-    private Vector2d currentPosition;
     private IWorldMap map;
-
+    private Vector2d currentPosition;
     private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
 
     //Depracated constructors without a map refernce.
@@ -45,14 +44,14 @@ public class Animal {
     }
 
     //Returns the position of the animal without allowing for modification
-    Vector2d getPosition()
-    {
-        return new Vector2d(currentPosition.x, currentPosition.y);
-    }
 
     public boolean isAt(Vector2d position)
     {
         return position.equals(currentPosition);
+    }
+
+    public Vector2d getPosition() {
+        return new Vector2d(currentPosition.x, currentPosition.y);
     }
 
     public void move(MoveDirection direction)

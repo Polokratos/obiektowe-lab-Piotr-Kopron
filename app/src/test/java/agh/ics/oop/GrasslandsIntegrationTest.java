@@ -28,6 +28,7 @@ public class GrasslandsIntegrationTest {
         IEngine engine = new SimulationEngine(directions, map, positions);
         assertEquals(map.GetAnimals().size(),2);
         assertEquals(map.GetGrass().size(),10);
+        assert(map.canMoveTo(new Vector2d(2, 3)));
         engine.run();
     }
 }
