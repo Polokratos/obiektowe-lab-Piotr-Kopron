@@ -41,19 +41,10 @@ public class MapBoundary implements IPositionChangeObserver{
         ObjectsByY = new TreeSet<Vector2d>(YCOM);
     }
 
-    //for objects that don't move on their own.
     public void place(Vector2d tp)
     {
         ObjectsByX.add(tp);
         ObjectsByY.add(tp);
-    }
-
-    //animals can move on their own.
-    public void place(Animal tp)
-    {
-        ObjectsByX.add(tp.getPosition());
-        ObjectsByY.add(tp.getPosition());
-        tp.addObserver(this);
     }
 
     @Override

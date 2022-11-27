@@ -90,9 +90,11 @@ public class Animal extends AbstractMapElement {
                 break;
             case LEFT:
                 currentDirection = currentDirection.previous();
+                positionChanged(currentPosition);
                 break;
             case RIGHT:
                 currentDirection = currentDirection.next();
+                positionChanged(currentPosition);
                 break;
             default:
                 break;

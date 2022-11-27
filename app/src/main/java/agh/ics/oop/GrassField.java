@@ -57,7 +57,7 @@ public class GrassField extends AbstractWorldMap{
         dirtyVectors.add(animal.getPosition());
         Vector2d ll = boundaryLowerLeft();
         Vector2d ur = boundaryLowerLeft();
-        boundary.place(animal);
+        boundary.place(animal.getPosition());
         if(!ll.equals(boundaryLowerLeft()) || !ur.equals(boundaryUpperRight())) //if boundary changed after placing
             superDirty = true; //redraw.
         animal.addObserver(this);
@@ -122,7 +122,9 @@ public class GrassField extends AbstractWorldMap{
         Vector2d ur = boundaryUpperRight();
         dirtyVectors.add(oldPosition);
         dirtyVectors.add(newPosition);
-        animals.put(newPosition,animals.remove(oldPosition));
+        Animal toMove = animals.remove(oldPosition);
+        animals.put(newPosition,toMove);
+        boundary.positionChanged(oldPosition, newPosition);
         if(!ll.equals(boundaryLowerLeft()) || !ur.equals(boundaryUpperRight())) //if boundary changed after placing
             superDirty = true; //redraw.
     }

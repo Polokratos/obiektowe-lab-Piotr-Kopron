@@ -69,8 +69,8 @@ public class App extends Application {
     }
 
     public void Update()
-    {
-        if(map.superDirty || true) //only on major changes requiring a redraw anyway
+    {   
+        if(map.superDirty) //only on major changes requiring a redraw anyway
         {
             grid.getChildren().clear();
             drawCoordinateLabels();    
@@ -78,15 +78,15 @@ public class App extends Application {
             FormatGrid();
             map.superDirty = false;
         }
-        //else
-        //{
-        //    for (Vector2d dirtyMapVector : map.dirtyVectors) {
-        //        Vector2d dirtyMapInGridVector = 
-        //        ConvertCoordinatesMapToGrid(dirtyMapVector).subtract(new Vector2d(1, 1));
-        //        mapInGrid[dirtyMapInGridVector.x][dirtyMapInGridVector.y].Update(map.objectAt(dirtyMapVector));
-        //    }
-        //}
-        //map.dirtyVectors.clear();
+        else
+        {
+            for (Vector2d dirtyMapVector : map.dirtyVectors) {
+                Vector2d dirtyMapInGridVector = 
+                ConvertCoordinatesMapToGrid(dirtyMapVector).subtract(new Vector2d(1, 1));
+                mapInGrid[dirtyMapInGridVector.x][dirtyMapInGridVector.y].Update(map.objectAt(dirtyMapVector));
+            }
+        }
+        map.dirtyVectors.clear();
     }
     private void drawCoordinateLabels()
     {
@@ -127,7 +127,7 @@ public class App extends Application {
     }
     private void DrawMapInGrid()
     {
-        mapInGrid = new GUIElementBox[x_amt()-1][y_amt()-1]; // 1 less ,since we drop the coordinate labels.
+        mapInGrid = new GUIElementBox[x_amt()][y_amt()];
         //x*y != 0 => map objects.
         for (int x = 1; x < x_amt(); x++) { 
             for (int y = 1; y < y_amt(); y++) {
