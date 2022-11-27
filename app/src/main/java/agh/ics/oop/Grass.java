@@ -1,14 +1,31 @@
 package agh.ics.oop;
 
-public class Grass {
-    private Vector2d currentPosition;
+import java.io.FileInputStream;
+
+import javafx.scene.image.Image;
+
+public class Grass extends AbstractMapElement {
+    
+    //static texture preload.
+    private static Image loadImage()
+    {
+        try {
+            return new Image(new FileInputStream("app\\src\\main\\resources\\grass.bmp"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    static Image texture = loadImage();
+    
+    @Override
+    public Image getTexture() {
+        return texture;
+    }
+    
+    
     public Grass(Vector2d pos)
     {
         currentPosition = pos;
-    }
-
-    public Vector2d getPosition() {
-        return new Vector2d(currentPosition.x, currentPosition.y);
     }
 
     public void setPosition(Vector2d value)

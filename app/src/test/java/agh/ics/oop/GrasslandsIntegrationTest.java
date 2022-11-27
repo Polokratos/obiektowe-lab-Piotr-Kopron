@@ -25,7 +25,7 @@ public class GrasslandsIntegrationTest {
         MoveDirection[] directions = OptionsParser.parse(args);
         GrassFieldTESTCLASS map = new GrassFieldTESTCLASS(10);
         Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        IEngine engine = new SimulationEngine(directions, map, positions,0,null);
         assertEquals(map.GetAnimals().size(),2);
         assertEquals(map.GetGrass().size(),10);
         assert(map.canMoveTo(new Vector2d(2, 3)));

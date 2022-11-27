@@ -1,6 +1,7 @@
 package agh.ics.oop;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +23,18 @@ public class MapBoundaryTest {
         assertEquals(v4,bd.upperright());
     }
 
-    public void MovementIntegrationTest()
+    @Test
+    public void placeFailTest()
     {
-        
+        var bd = new MapBoundary(null);
+        var v1 = new Vector2d(0, 0);
+        var v2 = new Vector2d(0, 0);
+        bd.place(v1);
+        try {
+            bd.place(v2);
+            fail();    
+        } catch (Exception e) {
+            //no-op
+        }
     }
 }

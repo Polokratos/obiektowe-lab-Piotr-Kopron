@@ -1,12 +1,41 @@
 package agh.ics.oop;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
-public class Animal {
+import javafx.scene.image.Image;
+
+public class Animal extends AbstractMapElement {
+    
+    //Static preloading of textures.
+    private static Image loadImage(String direction)
+    {
+        try {
+            return new Image(new FileInputStream("app/src/main/resources/animal"+direction.toUpperCase()+".bmp"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    private static Image N = loadImage("N");
+    private static Image E = loadImage("E");
+    private static Image W = loadImage("W");
+    private static Image S = loadImage("S");
+    
+    @Override
+    public Image getTexture()
+    {
+        return switch (currentDirection) {
+            case NORTH -> N;
+            case EAST  -> E;
+            case WEST  -> W;
+            case SOUTH -> S;
+        };
+    }
+
     private MapDirection currentDirection;
     private IWorldMap map;
-    private Vector2d currentPosition;
     private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
+
 
     //Depracated constructors without a map refernce.
     @Deprecated
@@ -48,10 +77,6 @@ public class Animal {
     public boolean isAt(Vector2d position)
     {
         return position.equals(currentPosition);
-    }
-
-    public Vector2d getPosition() {
-        return new Vector2d(currentPosition.x, currentPosition.y);
     }
 
     public void move(MoveDirection direction)

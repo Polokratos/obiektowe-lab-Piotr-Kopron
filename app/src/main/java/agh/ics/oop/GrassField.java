@@ -3,6 +3,7 @@ package agh.ics.oop;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
+
 import java.lang.Math;
 
 public class GrassField extends AbstractWorldMap{
@@ -11,12 +12,19 @@ public class GrassField extends AbstractWorldMap{
     
     protected MapBoundary boundary;
 
+    //Dirty flag: these vectors were subject to change and this change was not reflected in GUI (yet).
+    public ArrayList<Vector2d> dirtyVectors;
+    //Extensive changes to te map to the point of redrawing it all.
+    public boolean superDirty;
+
     public GrassField(int grassAmount)
     {
         vis = new MapVisualizer(this);
         boundary = new MapBoundary(this);
         patches = new HashMap<>();
         animals = new HashMap<>();
+        dirtyVectors = new ArrayList<>();
+        superDirty = true; //At simulation start, the map needs to be drawn.
         Random rng = new Random();
         int barrier = (int)Math.ceil(Math.sqrt(10*grassAmount));
         ArrayList<Vector2d> patch_notes = new ArrayList<>();
@@ -34,7 +42,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
     @Override
-    public Object objectAt(Vector2d position) {
+    public AbstractMapElement objectAt(Vector2d position) {
 
         if(animals.containsKey(position))
             return animals.get(position);
@@ -46,7 +54,12 @@ public class GrassField extends AbstractWorldMap{
     @Override
     public boolean place(Animal animal) {
         super.place(animal);
+        dirtyVectors.add(animal.getPosition());
+        Vector2d ll = boundaryLowerLeft();
+        Vector2d ur = boundaryLowerLeft();
         boundary.place(animal);
+        if(!ll.equals(boundaryLowerLeft()) || !ur.equals(boundaryUpperRight())) //if boundary changed after placing
+            superDirty = true; //redraw.
         animal.addObserver(this);
         return true;
     }
@@ -94,7 +107,24 @@ public class GrassField extends AbstractWorldMap{
         } while (objectAt(pos) != null);
         patches.remove(positionOLD);
         patches.put(pos, toMove);
+        dirtyVectors.add(pos);
+        dirtyVectors.add(positionOLD);
+        Vector2d ll = boundaryLowerLeft();
+        Vector2d ur = boundaryUpperRight();
         boundary.positionChanged(positionOLD, pos);
+        if(!ll.equals(boundaryLowerLeft()) || !ur.equals(boundaryUpperRight())) //if boundary changed after placing
+            superDirty = true; //redraw.
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        Vector2d ll = boundaryLowerLeft();
+        Vector2d ur = boundaryUpperRight();
+        dirtyVectors.add(oldPosition);
+        dirtyVectors.add(newPosition);
+        animals.put(newPosition,animals.remove(oldPosition));
+        if(!ll.equals(boundaryLowerLeft()) || !ur.equals(boundaryUpperRight())) //if boundary changed after placing
+            superDirty = true; //redraw.
     }
 
 }

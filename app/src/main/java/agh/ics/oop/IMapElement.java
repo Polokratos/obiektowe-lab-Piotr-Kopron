@@ -3,6 +3,7 @@ package agh.ics.oop;
 public interface IMapElement {
     /**
      * Interface is not implemented (leaving a stub so this comment is easy to find.)
+     * Base class created instead. (AbstractMapElement)
      * In favour : Some code is duplicated an can be cleared.
      * Against: base class would do it better and better represent the relationship.
      * Against: GrassField still needs different stores of animals and grass.
